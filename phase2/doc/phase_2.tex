@@ -56,7 +56,25 @@ In the program, we created two classes to store information about stations and t
 \end{center}
 
 \section{Algorithm and Time Complexity}
-The algorithm I used 
+The algorithm I used is similar to the algorithm that presented in solution 1. However, since the first solution is not feasible in solving the problem, my description of algorithm is listed below.
+\begin{algorithm}
+    \begin{algorithmic}
+        \For {$train\in{}trains$}
+        \State $j\gets{}train.origin$
+        \While {$j\neq{}train.destination$}
+            \State $ADJUSTSCHEDULE(train, j)$
+            \If{station j is over load}
+                \State $Wating on the j-1 station$
+                \State $j\gets{}j-1$        \Comment{Wating on the previous station}
+            \Else
+            \State $j\gets{}j+1$        \Comment{Go to next station}
+            \EndIf
+        \EndWhile
+    \EndFor
+    \end{algorithmic}
+    \caption{Algorithm}
+    \label{algo}
+\end{algorithm}
 %Past a screen shot of String Graph here
 %Maybe I can use libpng to make it looks better
 

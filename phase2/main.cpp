@@ -32,6 +32,12 @@ int NumTrainToDraw = 0;
 
 int maxTime = 60*20*4;                //Track the time of last arrival
 
+void calculateParams()
+{
+    //Calculate and output required parameters, they are:
+    //1. Average end-to-end travel time, i.e. 
+}
+
 bool isOverLoad(int t, int station)
 {
     //TODO: test if it is over capacity at station
@@ -405,7 +411,6 @@ int main(int argc, char **argv)
 
                 int waitingTime = adjustSchedule(i, j);
 
-                cout<<i<<"\t"<<j<<"\t"<<waitingTime<<"\n";
 
                 if ( j+1 != trains[i].getOrigin() )
                 {
@@ -425,7 +430,7 @@ int main(int argc, char **argv)
             {
                 int waitingTime = adjustSchedule(i, j);
                 
-                cout<<i<<"\t"<<j<<"\t"<<waitingTime<<"\n";
+                //cout<<i<<"\t"<<j<<"\t"<<waitingTime<<"\n";
 
                 if ( j != trains[i].getOrigin() )
                 {
@@ -458,6 +463,7 @@ int main(int argc, char **argv)
     
 
 #endif
+    return 0;
 
     
     //Init Opengl
