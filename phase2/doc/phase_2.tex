@@ -53,30 +53,50 @@ In the program, we created two classes to store information about stations and t
     \includegraphics[width=12cm]{class.ps}
     %\figcaption{UML}
     \label{uml}
-\end{center}
-
-\section{Algorithm and Time Complexity}
+\end{center} \section{Algorithm and Time Complexity}
 The algorithm I used is similar to the algorithm that presented in solution 1. However, since the first solution is not feasible in solving the problem, my description of algorithm is listed below.
 \begin{algorithm}
     \begin{algorithmic}
         \For {$train\in{}trains$}
-        \State $j\gets{}train.origin$
-        \While {$j\neq{}train.destination$}
-            \State $ADJUSTSCHEDULE(train, j)$
+        \State {$j\gets{}train.origin$}
+        \While {$j!={}train.destination$}
+        \State {$ADJUSTSCHEDULE(train, j)$}
             \If{station j is over load}
-                \State $Wating on the j-1 station$
-                \State $j\gets{}j-1$        \Comment{Wating on the previous station}
+            \State {Wating on the j-1 station}
+            \State {$j\gets{}j-1$}        \Comment{Wating on the previous station}
             \Else
-            \State $j\gets{}j+1$        \Comment{Go to next station}
+            \State {$j\gets{}j+1$}        \Comment{Go to next station}
             \EndIf
         \EndWhile
     \EndFor
     \end{algorithmic}
-    \caption{Algorithm}
+    \caption{Over all}
     \label{algo}
 \end{algorithm}
 %Past a screen shot of String Graph here
 %Maybe I can use libpng to make it looks better
+\begin{algorithm}
+    \begin{algorithmic}
+        \While {$t!=thisTrain$}
+            \If {t and thisTrain are of same direction}
+            \If {t and thisTrain meet in segment j}
+                \State {Make this train wait until t pass}
+                \State {t$\gets{}$First train}    \Comment{Check all over again}
+            \EndIf
+            \Else       \Comment{Same direction}
+                \If {distance between this t and thisTrain is smaller than safty space}
+                \State {make t wait}
+                \State {t$\gets{}$First train}    \Comment{Check all over again}
+                \EndIf
+            \EndIf
+            \State {t $\gets$ NextTrain}
+        \EndWhile
+    \end{algorithmic}
+    \caption{ADJUSTSCHEDULE}
+    \label{adjust}
+\end{algorithm}
+
+The check capcity part takes $O(n\log{|T|}+|T|)$ time since we need to sort the departure and arrival time on the siding to see if it is over capcity. In checking and adjusting a train in a segment, we need $O(|T|)$ time for checking every train and $O(|S|)$ time to adjust schedule of the train.
 
 
 \end{document}
