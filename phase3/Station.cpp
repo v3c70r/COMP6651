@@ -21,11 +21,12 @@ Station::Station( vector<string>  stationData)
         case 20: 
         case 40: capacity = 4;
                  break;
-        case 9: 
-        case 15: 
-        case 38: 
+        case 5: 
+        case 10: 
+        case 21: 
+        case 39: 
         case 50: 
-        case 59: capacity = 3;
+        case 55: capacity = 3;
                  break;
         default: capacity = 2;
                  break;

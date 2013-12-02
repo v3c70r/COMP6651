@@ -30,7 +30,36 @@ int width = 1024;
 
 int NumTrainToDraw = 0;
 
-int maxTime = 60*20*4;                //Track the time of last arrival
+int maxTime = 60*20*5;                //Track the time of last arrival
+
+void calculateParams()
+{
+    //Calculate and output required parameters, they are:
+    //1. Average end-to-end travel time, i.e. 
+    int sum_of_waiting_time = 0;
+    int sum_of_travel_time = 0;
+    for (int i = 0; i < trains.size(); i++)
+    {
+        int travelTime = trains[i].getArrivalTime(trains[i].getDestination()) - trains[i].getDepartureTime(trains[i].getOrigin());
+        sum_of_travel_time += travelTime;
+        if (trains[i].isWestbound())        //is west bound
+        {
+            for ( int j = trains[i].getOrigin(); j >= trains[i].getDestination(); j--)
+            {
+                sum_of_waiting_time += trains[i].getDepartureTime(j) - trains[i].getArrivalTime(j);
+            }
+        }
+        else                                //is east bound
+        {
+            for ( int j = trains[i].getOrigin(); j <= trains[i].getDestination(); j++)
+            {
+                sum_of_waiting_time += trains[i].getDepartureTime(j) - trains[i].getArrivalTime(j);
+            }
+        }
+    }
+    cout<<"Average waiting time:\t"<<sum_of_waiting_time/trains.size()<<endl;
+    cout<<"Average travelling time:\t"<<sum_of_travel_time/trains.size()<<endl;
+}
 
 bool isOverLoad(int t, int station)
 {
@@ -83,6 +112,7 @@ int getNextAvailableTime(int recentTime, int t, int station)
 
 int adjustSchedule(int t, int s )    //Adjust train t at segment s, where train starts with 0 and s starts with 1. Return the waiting time
 {
+    //cout<<"Adjusting";
     int waitingTime = 0;                //In order to trace back, set a waitingTime value to track the waiting time before entering s
 
     if (trains[t].isWestbound())
@@ -209,11 +239,13 @@ void handleKeyPress(int key, int x, int y)
     {
         case GLUT_KEY_RIGHT:
             NumTrainToDraw ++;
+            cout<<"Drawn Trains:\t"<<NumTrainToDraw<<endl;
             if (NumTrainToDraw > NUM_OF_TRAINS)
                 NumTrainToDraw--;
             break;
         case GLUT_KEY_LEFT:
             NumTrainToDraw --;
+            cout<<"Drawn Trains:\t"<<NumTrainToDraw<<endl;
             if (NumTrainToDraw < 0)
                 NumTrainToDraw++;
             break;
@@ -388,6 +420,45 @@ int initialize()
     fin.close();
     testTrains = trains;
 
+    //Initialize phase 3 by code
+    //trains[0].setDepartureTime( 50, trains[0].getDepartureTime(50)+60, stations);
+    //trains[0].setDepartureTime( 39, trains[0].getDepartureTime(50)+60, stations);
+    //trains[0].setDepartureTime( 50, trains[0].getDepartureTime(50)+60, stations);
+
+    fileName = "TrainScheduleProject6651UpdateWithDwellTime.csv";
+    fin.open(fileName.c_str());
+    if(!fin.good())
+        return 1;   //exit if file not found
+
+
+    std::getline(fin, buff);                   //Eliminate the first line
+    while(std::getline(fin, buff))
+    {
+        splitstring s(buff);
+        vector<string> trainInfo = s.split(',');
+        trainInfo[trainInfo.size()-1].erase(trainInfo[trainInfo.size()-1].size() - 1);      //remove last '\r'
+        int trainIndex = stoi(trainInfo[0])-1;
+        for(int z = 5; z<trainInfo.size(); z=z+2)
+        {
+            if ( trainInfo[z] != "")
+            {
+                int stationNum = stoi(trainInfo[z]);
+                int dwell = stoi(trainInfo[z+1]);
+                if (trains[trainIndex].getDepartureTime(stationNum) != -1)      //If there's train here, don't change it
+                {
+                    //cout<<trainIndex<<"\t"<<stationNum<<"\t"<<dwell<<"\t";
+                    trains[trainIndex].setDepartureTime( stationNum, trains[trainIndex].getDepartureTime(stationNum)+dwell, stations);
+                }
+            }
+        }
+        //trains[0].setDepartureTime(1, trains[0].getDepartureTime(1)+1, stations);
+
+
+    }
+    fin.close();
+    
+
+
     return 0;
 }
 
@@ -405,7 +476,6 @@ int main(int argc, char **argv)
 
                 int waitingTime = adjustSchedule(i, j);
 
-                cout<<i<<"\t"<<j<<"\t"<<waitingTime<<"\n";
 
                 if ( j+1 != trains[i].getOrigin() )
                 {
@@ -425,7 +495,7 @@ int main(int argc, char **argv)
             {
                 int waitingTime = adjustSchedule(i, j);
                 
-                cout<<i<<"\t"<<j<<"\t"<<waitingTime<<"\n";
+                //cout<<i<<"\t"<<j<<"\t"<<waitingTime<<"\n";
 
                 if ( j != trains[i].getOrigin() )
                 {
@@ -458,6 +528,8 @@ int main(int argc, char **argv)
     
 
 #endif
+    
+    calculateParams();
 
     
     //Init Opengl
